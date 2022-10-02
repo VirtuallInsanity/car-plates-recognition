@@ -148,7 +148,7 @@ def show_results(char):
     return plate_number
 
 #load pretrained model
-pre_trained_model = load_keras_model('model_LicensePlate_epoch_60')
+pre_trained_model = load_keras_model('model_LicensePlate_2')
 model = pre_trained_model
 
 if len(sys.argv) == 2:    
