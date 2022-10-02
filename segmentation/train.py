@@ -14,7 +14,7 @@ from segmentation.preprocessing import get_preprocessing
 
 def main():
     config = configs.BaseConfig()
-    metadata = load_metadata(config)[:100]
+    metadata = load_metadata(config)
     augmentation = {
         'train': get_train_augmentation(config),
         'val': get_val_augmentation(config),
