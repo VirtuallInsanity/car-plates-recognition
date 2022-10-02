@@ -25,7 +25,6 @@ class Dataset(BaseDataset):
         self.augmentation = augmentation
         self.preprocessing = preprocessing
         self._prepare_dirs()
-        self._process_filepaths()
         self._process_masks()
 
     def __len__(self):
@@ -54,25 +53,18 @@ class Dataset(BaseDataset):
         if not os.path.exists(self.mask_dir):
             os.makedirs(self.mask_dir)
 
-    def _process_filepaths(self):
-        for sample in self.metadata:
-            filename = os.path.basename(sample['file'])
-            self.image_filepaths.append(
-                os.path.join(
-                    self.image_dir,
-                    filename,
-                ),
-            )
-            self.mask_filepaths.append(
-                os.path.join(
-                    self.mask_dir,
-                    filename,
-                ),
-            )
-
     def _process_masks(self):
-        for idx, sample in enumerate(tqdm(self.metadata)):
-            image = cv2.imread(self.image_filepaths[idx])
+        for sample in tqdm(self.metadata):
+            filename = os.path.basename(sample['file'])
+            image_filepath = os.path.join(
+                self.image_dir,
+                filename,
+            )
+            mask_filepath = os.path.join(
+                self.mask_dir,
+                filename,
+            )
+            image = cv2.imread(image_filepath)
             if image is not None:
                 mask = np.zeros(
                     shape=image.shape[:2],
@@ -84,10 +76,9 @@ class Dataset(BaseDataset):
                         np.asarray(num['box']),
                         1.0,
                     )
-                cv2.imwrite(self.mask_filepaths[idx], mask)
-            else:
-                self.image_filepaths.pop(idx)
-                self.mask_filepaths.pop(idx)
+                cv2.imwrite(mask_filepath, mask)
+                self.image_filepaths.append(image_filepath)
+                self.mask_filepaths.append(mask_filepath)
 
 
 def get_data_loaders(config, train_dataset, val_dataset):
