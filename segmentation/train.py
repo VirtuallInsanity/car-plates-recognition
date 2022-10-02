@@ -68,12 +68,12 @@ def main():
             train_loader,
             val_loader,
         )
-        save_model(
-            config,
-            model,
-            best_score,
-            val_logs,
-        )
+        if val_logs[config.metric] > best_score:
+            best_score = val_logs[config.metric]
+            save_model(
+                config,
+                model,
+            )
 
 
 def load_metadata(config):
@@ -85,15 +85,14 @@ def load_metadata(config):
         return json.load(metadata_file)
 
 
-def save_model(config, model, best_score, logs):
-    if best_score < logs[config.metric]:
-        torch.save(
-            model,
-            os.path.join(
-                config.checkpoint_dir,
-                config.checkpoint_filename,
-            ),
-        )
+def save_model(config, model):
+    torch.save(
+        model,
+        os.path.join(
+            config.checkpoint_dir,
+            config.checkpoint_filename,
+        ),
+    )
 
 
 def prepare_dirs(config):
