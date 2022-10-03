@@ -19,6 +19,8 @@ class BaseConfig(object):
     image_width = 320
     height_divisor = 32
     width_divisor = 32
+    output_image_height = 112
+    output_image_width = 520
 
     # model
     segmentation_model = 'unet'
