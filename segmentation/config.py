@@ -38,11 +38,11 @@ class BaseConfig(object):
     num_workers = 0
 
     # filepaths
-    checkpoint_dir = '../checkpoints'
+    checkpoint_dir = 'checkpoints'
     checkpoint_filename = 'best_model.pth'
-    metadata_filepath = '../data/train.json'
-    image_dir = '../data/images'
-    mask_dir = '../data/masks'
+    metadata_filepath = 'data/train.json'
+    image_dir = 'data/images'
+    mask_dir = 'data/masks'
 
     # metrics
     metric_threshold = 0.5

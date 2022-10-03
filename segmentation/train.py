@@ -4,12 +4,11 @@ import os
 import torch
 from segmentation_models_pytorch.utils.train import TrainEpoch, ValidEpoch
 
-from segmentation import config as configs
-from segmentation.augmentation import (get_train_augmentation,
-                                       get_val_augmentation)
-from segmentation.data import get_data_loaders, get_datasets
-from segmentation.model import get_loss, get_metrics, get_model, get_optimizer
-from segmentation.preprocessing import get_preprocessing
+import config as configs
+from data import get_data_loaders, get_datasets
+from augmentation import get_train_augmentation, get_val_augmentation
+from model import get_loss, get_metrics, get_model, get_optimizer
+from preprocessing import get_preprocessing
 
 
 def main():

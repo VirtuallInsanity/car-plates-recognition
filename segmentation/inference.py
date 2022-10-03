@@ -1,10 +1,11 @@
 import os
 from argparse import ArgumentParser
 
-import config as configs
 import cv2
 import numpy as np
 import torch
+
+import config as configs
 from augmentation import get_val_augmentation
 from preprocessing import get_preprocessing
 
