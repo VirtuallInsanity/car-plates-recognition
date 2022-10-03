@@ -1,6 +1,5 @@
 import segmentation_models_pytorch as smp
-from segmentation_models_pytorch.utils.losses import DiceLoss
-from segmentation_models_pytorch.utils.metrics import Fscore, IoU
+from torch.nn import BCEWithLogitsLoss
 from torch.optim import AdamW
 
 
@@ -21,11 +20,4 @@ def get_optimizer(config, model_parameters):
 
 
 def get_loss():
-    return DiceLoss()
-
-
-def get_metrics(config):
-    return [
-        IoU(threshold=config.metric_threshold),
-        Fscore(threshold=config.metric_threshold),
-    ]
+    return BCEWithLogitsLoss()
