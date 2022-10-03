@@ -1,10 +1,19 @@
+
 import torch
+import glob
 
-model = torch.hub.load('yolov5', 'custom', path='yolov5_out/best_100eph.pt', source='local')
 
-im = 'car1.jpg'
+def inference_yolov5(image, weights_path='car_plates/yolov5_out/best_100eph.pt'):
+    model = torch.hub.load('ultralytics/yolov5', 'custom', path=weights_path)
 
-# Inference
-results = model(im)
-results.save()
-print(results.pandas().xyxy[0])
+    results = model(image)
+
+    results.save()
+    results.crop(save=True)
+    print(results.pandas().xyxy[0])
+
+    # print(results.crop()[0]['im'][0])
+    detections = glob.glob("runs/detect/exp2/crops/carplate/*")
+    print(detections)
+
+    return detections
