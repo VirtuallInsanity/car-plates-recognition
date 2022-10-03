@@ -19,7 +19,7 @@ def main():
     model.eval()
 
     image = cv2.imread(args.image_filepath)
-    preprocessed_image = preprocess_image(config, image)
+    preprocessed_image = preprocess_image(config, image).to(device)
 
     with torch.no_grad():
         outputs = model.predict(preprocessed_image).squeeze().cpu().numpy()
@@ -81,10 +81,9 @@ def load_model(checkpoint_filepath, device):
 def preprocess_image(config, image):
     augmentation = get_val_augmentation(config)
     preprocessing = get_preprocessing(config)
-    sample = preprocessing(
-        image=augmentation(image=image)['image'],
-    )['image']
-    return sample.unsqueeze(0).float()
+    image = augmentation(image=image)['image']
+    image = preprocessing(image=image)['image']
+    return image.unsqueeze(0).float()
 
 
 def get_boxes_form_mask(mask):
@@ -133,6 +132,7 @@ def crop_image(image, box, output_size):
         image,
         homography,
         dsize=output_size,
+        flags=cv2.INTER_LANCZOS4,
     )
 
 
