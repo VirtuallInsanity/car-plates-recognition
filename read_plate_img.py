@@ -10,7 +10,9 @@ filename = 'cars1.bmp'
 cropped_imgs_path = inference_yolov5(filename)
 
 for cropped_img in cropped_imgs_path:
-    char = segment_characters(cv2.imread(cropped_img))
+    image = cv2.imread(cropped_img)
+    image = cv2.resize(image, (400, 90))
+    char = segment_characters(image)
     print(show_results(char))
 
 dirpath = Path('runs')
