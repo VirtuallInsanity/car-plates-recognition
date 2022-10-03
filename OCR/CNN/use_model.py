@@ -83,10 +83,9 @@ def segment_characters(image) :
 
     img_lp = cv2.resize(image, (333, 75))
     img_gray_lp = cv2.cvtColor(img_lp, cv2.COLOR_BGR2GRAY)
-    _, img_binary_lp = cv2.threshold(img_gray_lp, 200, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-    img_binary_lp = cv2.erode(img_binary_lp, (3,3))
-    img_binary_lp = cv2.dilate(img_binary_lp, (3,3))
-    img_binary_lp = cv2.dilate(img_binary_lp, (3,3))
+    _, img_binary_lp = cv2.threshold(img_gray_lp, 220, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    img_binary_lp = cv2.erode(img_binary_lp, (2,2))
+    img_binary_lp = cv2.dilate(img_binary_lp, (2,2))
 
     LP_WIDTH = img_binary_lp.shape[0]
     LP_HEIGHT = img_binary_lp.shape[1]
@@ -148,11 +147,13 @@ def show_results(char):
 pre_trained_model = load_keras_model('model_LicensePlate_2')
 model = pre_trained_model
 
-if len(sys.argv) == 2:    
-    raw_path = sys.argv[1] #path
-    path = raw_path.replace('\\', '/').replace('"',"") #\ replace /, delete ""
-    img = cv2.imread(path) #'./nomeroff-russian-license-plates/autoriaNumberplateOcrRu-2021-09-01/test/img/A001BP54.png' for example
-    char = segment_characters(img)
-    print(show_results(char))
-else:
-    print("Не указан путь!")
+if __name__ == "__main__":
+    if len(sys.argv) == 2:    
+        raw_path = sys.argv[1] #path
+        path = raw_path.replace('\\', '/').replace('"',"") #\ replace /, delete ""
+        img = cv2.imread(path) #'./nomeroff-russian-license-plates/autoriaNumberplateOcrRu-2021-09-01/test/img/A001BP54.png' for example
+        img = cv2.resize(img, (400, 90))
+        char = segment_characters(img)
+        print(show_results(char))
+    else:
+        print("Не указан путь!")
