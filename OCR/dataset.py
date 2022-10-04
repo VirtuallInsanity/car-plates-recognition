@@ -106,8 +106,6 @@ for i in range(len(train_symbols)):
             cv2.imwrite('./train/class_' + train_symbols[i][1][j] + '/' + train_symbols[i][1] + '_' + str(j) + '.jpg', char[j])
 
 val_symbols = []
-import os
-import json
 path_json = './nomeroff-russian-license-plates/autoriaNumberplateOcrRu-2021-09-01/val/ann/'
 for dirname, _, filenames in os.walk('./nomeroff-russian-license-plates/autoriaNumberplateOcrRu-2021-09-01/val/img'):
     for filename in filenames:
@@ -123,8 +121,6 @@ for i in range(len(val_symbols)):
             cv2.imwrite('./val/class_' + val_symbols[i][1][j] + '/' + val_symbols[i][1] + '_' + str(j) + '.jpg', char[j])
 
 test_symbols = []
-import os
-import json
 path_json = '.nomeroff-russian-license-plates/autoriaNumberplateOcrRu-2021-09-01/test/ann/'
 for dirname, _, filenames in os.walk('./nomeroff-russian-license-plates/autoriaNumberplateOcrRu-2021-09-01/test/img'):
     for filename in filenames:
