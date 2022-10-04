@@ -115,18 +115,3 @@ if __name__ == "__main__":
         print(show_results(char))
     else:
         print("Не указан путь!")
-
-# #TEST MODEL
-# train_datagen = ImageDataGenerator(rescale=1./255, width_shift_range=0.1, height_shift_range=0.1)
-# test_generator = train_datagen.flow_from_directory('./test', target_size=(28,28), batch_size=1, class_mode='sparse')
-# ok = 0
-# all = len(test_generator.filepaths)
-# for i in range(len(test_generator.filepaths)):
-#     path = test_generator.filepaths[i]
-#     key = test_generator.filepaths[i][33:test_generator.filepaths[i].rfind('/')]
-#     symbol = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-#     #symbol = cv2.bitwise_not(symbol)
-#     result = pytesseract.image_to_string(symbol, config='--psm 13')[0]
-#     if ('class_' + result == key) or (result in ('0', 'O') and key in ('class_0', 'class_O')) or ((result == 'V') and (key == 'class_Y')):
-#         ok += 1
-# print(ok/all)
