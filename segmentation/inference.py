@@ -24,7 +24,12 @@ def main():
     with torch.no_grad():
         outputs = model.predict(preprocessed_image).squeeze().cpu().numpy()
         mask = (outputs > config.metric_threshold).astype(np.uint8)
-    for idx, box in enumerate(get_boxes_form_mask(mask)):
+    boxes = get_boxes_form_mask(
+        mask,
+        config.min_output_image_width,
+        config.min_output_image_height,
+    )
+    for idx, box in enumerate(boxes):
         output_size = (config.output_image_width, config.output_image_height)
         output_image = crop_image(image, order_points(box), output_size)
         _, extension = os.path.basename(args.image_filepath).split('.')
@@ -86,7 +91,11 @@ def preprocess_image(config, image):
     return image.unsqueeze(0).float()
 
 
-def get_boxes_form_mask(mask):
+def get_boxes_form_mask(
+    mask,
+    min_width,
+    min_height,
+):
     contours, _ = cv2.findContours(
         mask,
         cv2.RETR_EXTERNAL,
@@ -94,11 +103,12 @@ def get_boxes_form_mask(mask):
     )
     boxes = []
     for contour in contours:
-        boxes.append(
-            cv2.boxPoints(
-                cv2.minAreaRect(contour),
-            ),
-        )
+        rect = cv2.minAreaRect(contour)
+        width, height = rect[1]
+        if width > min_width and height > min_height:
+            boxes.append(
+                cv2.boxPoints(rect),
+            )
     return boxes
 
 
