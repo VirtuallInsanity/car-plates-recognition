@@ -12,6 +12,66 @@
 
 Скачать веса, данные для теста и посмотреть исходыне данные: https://drive.google.com/drive/folders/1oxzpehwLPBXs81VrEGzPs4b73ADVO5C3?usp=sharing
 
+# Plates segmentation
+### Датасет
+Для обучения и валидации модели были использованы данные из этого [соревнования](https://www.kaggle.com/competitions/vkcv2022-contest-02-carplates). Для валидации использовалось 5% изображений.
+### Предобработка данных
+##### Training
+```python
+import albumentations as al
+
+augmentation = al.Compose
+(
+    [
+        al.PadIfNeeded(
+            min_height=config.image_height,
+            min_width=config.image_width,
+            border_mode=0,
+            value=0,
+            mask_value=0,
+            always_apply=True,
+        ),
+        al.CropNonEmptyMaskIfExists(
+            height=config.image_height,
+            width=config.image_width,
+        ),
+        al.Perspective(
+            pad_mode=0,
+        ),
+        al.OneOf(
+            [
+                al.Blur(blur_limit=7, p=1.0),
+                al.MotionBlur(blur_limit=7, p=1.0),
+            ],
+            p=0.8,
+        ),
+    ],
+)
+```
+##### Validation
+```python
+import albumentations as al
+
+augmentation = al.PadIfNeeded
+(
+    min_height=None,
+    min_width=None,
+    pad_height_divisor=config.height_divisor,
+    pad_width_divisor=config.width_divisor,
+    border_mode=0,
+    value=0,
+    mask_value=0,
+    always_apply=True,
+)
+```
+### Результаты
+| Model      | Image size | F1 score validation |
+| :--------: | :--------: | :-----------------: |
+| Unet       | 320x320    | 0.92688             |
+| Unet       | 480x480    | 0.93687             |
+| DeepLabV3+ | 320x320    | in progress...      |
+| DeepLabV3+ | 480x480    | in progress...      |
+
 # OCR
 Для решения задачи OCR использовался датасет [Nomeroff Russian license plates](https://www.kaggle.com/datasets/evgrafovmaxim/nomeroff-russian-license-plates). Задача OCR была разделена на две подзадачи:
 - Выделение символов на номере
