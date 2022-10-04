@@ -3,6 +3,7 @@ from pathlib import Path
 import shutil
 
 from car_plates.detect_plates_yolov5 import inference_yolov5
+from car_plates.detect_plates_yolov7 import inference_yolov7
 # from OCR.Tesseract.use_model import segment_characters, show_results
 from OCR.CNN.use_model import segment_characters, show_results
 
