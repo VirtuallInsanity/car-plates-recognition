@@ -10,11 +10,11 @@ import tensorflow.keras.backend as K
 train_datagen = ImageDataGenerator(rescale=1./255, width_shift_range=0.1, height_shift_range=0.1)
 path = './' #datasets path
 
-train_generator = train_datagen.flow_from_directory(path+'/train', target_size=(28,28), class_mode='sparse')
+train_generator = train_datagen.flow_from_directory(os.path.join(path, 'train'), target_size=(28,28), class_mode='sparse')
 
-validation_generator = train_datagen.flow_from_directory(path+'/val', target_size=(28,28), batch_size=1, class_mode='sparse')
+validation_generator = train_datagen.flow_from_directory(os.path.join(path, 'val'), target_size=(28,28), batch_size=1, class_mode='sparse')
 
-test_generator = train_datagen.flow_from_directory(path, target_size=(28,28), batch_size=1, class_mode='sparse')
+test_generator = train_datagen.flow_from_directory(os.path.join(path, 'test'), target_size=(28,28), batch_size=1, class_mode='sparse')
 
 def f1score(y, y_pred):
     return f1_score(y, tf.math.argmax(y_pred, axis=1), average='micro') 
@@ -61,18 +61,3 @@ for i in range(int(epoch / step_save)):
           validation_data = validation_generator, 
           epochs = step_save, verbose=1, callbacks=callbacks)
     store_keras_model(model, 'model_LicensePlate_epoch_' + str((i + 1) * step_save))
-
-# #TEST MODEL
-# train_datagen = ImageDataGenerator(rescale=1./255, width_shift_range=0.1, height_shift_range=0.1)
-# test_generator = train_datagen.flow_from_directory('./test', target_size=(28,28), batch_size=1, class_mode='sparse')
-# ok = 0
-# all = len(test_generator.filepaths)
-
-# for i in range(len(test_generator.filepaths)):
-#     path = test_generator.filepaths[i]
-#     key = test_generator.filepaths[i][2:test_generator.filepaths[i].rfind('/')]
-#     symbol = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-#     result = show_results(symbol)
-#     if ('class_' + result == key) or (result in ('0', 'O') and key in ('class_0', 'class_O')):
-#         ok += 1
-# print(ok/all)
