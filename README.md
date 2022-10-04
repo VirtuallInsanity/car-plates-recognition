@@ -1,4 +1,15 @@
-# car-plates-recognition
+# Распознавание номеров машин
+
+В файле ***read_plate_img.py*** происходит детекция номера на изображении с помощью yolov5/yolov7, а затем считывание символов припомощи CNN/Tesseract с обнаруженных номеров.
+
+# Plates detection
+В папке ***car_plates*** находятся следующие файлы:
+- ***car_plates/detect_plates_yolov5.py*** содержит метод для использования нейронной сети yolov5 от [ultralytics](https://github.com/ultralytics/yolov5)
+- ***car_plates/detect_plates_yolov7.py*** содержит метод для использования нейронной сети yolov7 от [WongKinYiu](https://github.com/WongKinYiu/yolov7)
+- ***car_plates/generate_txt.py*** вспомогательный скрипт который был использован для генерации аннотации изображений для сетей yolo в .txt формате
+- ***car_plates/yolov5_out/*** содержит веса, инференс на одной картинке и различные метрики обучения относящиеся к yolov5
+- ***car_plates/yolov7_out/*** содержит инференс на одной картинке относящийся к yolov7, веса можно скачать по ссылке и поместить в эту папку
+
 Скачать веса, данные для теста и посмотреть исходыне данные: https://drive.google.com/drive/folders/1oxzpehwLPBXs81VrEGzPs4b73ADVO5C3?usp=sharing
 
 # OCR
