@@ -1,16 +1,18 @@
 import os
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
+from typing import List, Tuple
 
 import cv2
 import numpy as np
 import torch
-
-import config as configs
 from augmentation import get_val_augmentation
 from preprocessing import get_preprocessing
 
+import config as configs
+from config import BaseConfig
 
-def main():
+
+def main() -> None:
     config = configs.BaseConfig()
     args = parse_arguments()
 
@@ -43,7 +45,7 @@ def main():
         )
 
 
-def parse_arguments():
+def parse_arguments() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument(
         '-d',
@@ -76,26 +78,32 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def load_model(checkpoint_filepath, device):
+def load_model(
+    checkpoint_filepath: str,
+    device: torch.device,
+) -> torch.nn.Module:
     return torch.load(
         checkpoint_filepath,
         map_location=device,
     )
 
 
-def preprocess_image(config, image):
+def preprocess_image(
+    config: BaseConfig,
+    image: np.ndarray,
+) -> torch.FloatTensor:
     augmentation = get_val_augmentation(config)
     preprocessing = get_preprocessing(config)
-    image = augmentation(image=image)['image']
-    image = preprocessing(image=image)['image']
-    return image.unsqueeze(0).float()
+    aug_image = augmentation(image=image)['image']
+    pre_image = preprocessing(image=aug_image)['image']
+    return pre_image.unsqueeze(0).float()
 
 
 def get_boxes_form_mask(
-    mask,
-    min_width,
-    min_height,
-):
+    mask: np.ndarray,
+    min_width: int,
+    min_height: int,
+) -> List[np.ndarray]:
     contours, _ = cv2.findContours(
         mask,
         cv2.RETR_EXTERNAL,
@@ -112,7 +120,7 @@ def get_boxes_form_mask(
     return boxes
 
 
-def order_points(points):
+def order_points(points: np.ndarray) -> np.ndarray:
     rect = np.zeros((4, 2))
     sums = points.sum(axis=1)
     rect[0] = points[np.argmin(sums)]
@@ -123,12 +131,16 @@ def order_points(points):
     return rect
 
 
-def prepare_dirs(output_dir):
+def prepare_dirs(output_dir: str) -> None:
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
 
-def crop_image(image, box, output_size):
+def crop_image(
+    image: np.ndarray,
+    box: np.ndarray,
+    output_size: Tuple[int, int],
+) -> np.ndarray:
     dst = np.asarray(
         [
             [0, 0],
@@ -147,10 +159,10 @@ def crop_image(image, box, output_size):
 
 
 def save_image(
-    image,
-    filename,
-    output_dir,
-):
+    image: np.ndarray,
+    filename: str,
+    output_dir: str,
+) -> None:
     filepath = os.path.join(
         output_dir,
         filename,

@@ -1,19 +1,22 @@
 import json
 import logging
 import os
+from typing import Dict, List, Tuple
 
 import segmentation_models_pytorch as smp
 import torch
 import tqdm
-
-import config as configs
 from augmentation import get_train_augmentation, get_val_augmentation
 from model import get_loss, get_model, get_optimizer
 from preprocessing import get_preprocessing
+from torch.utils.data import DataLoader
+
+import config as configs
+from config import BaseConfig
 from data import get_data_loaders, get_datasets
 
 
-def main():
+def main() -> None:
     logger = get_logger()
     config = configs.BaseConfig()
     metadata = load_metadata(config)
@@ -47,7 +50,7 @@ def main():
 
     model.to(config.device)
 
-    best_val_score = 0
+    best_val_score: float = 0
 
     for epoch in range(config.epochs):
         logger.info(
@@ -93,7 +96,7 @@ def main():
             best_val_score = f1_score_val
 
 
-def load_metadata(config):
+def load_metadata(config: BaseConfig) -> List[Dict]:
     with open(
         config.metadata_filepath,
         'r',
@@ -102,7 +105,10 @@ def load_metadata(config):
         return json.load(metadata_file)
 
 
-def save_model(config, model):
+def save_model(
+    config: BaseConfig,
+    model: torch.nn.Module,
+) -> None:
     torch.save(
         model,
         os.path.join(
@@ -112,25 +118,24 @@ def save_model(config, model):
     )
 
 
-def prepare_dirs(config):
+def prepare_dirs(config: BaseConfig) -> None:
     if not os.path.exists(config.checkpoint_dir):
         os.makedirs(config.checkpoint_dir)
 
 
 def train_epoch(
-    config,
-    model,
-    optimizer,
-    criterion,
-    data_loader,
-):
+    config: BaseConfig,
+    model: torch.nn.Module,
+    optimizer: torch.optim.Optimizer,
+    criterion: torch.nn.Module,
+    data_loader: DataLoader,
+) -> Tuple[Dict[str, torch.Tensor], float]:
     model.train()
     total_loss = 0
+    prediction_types = ['tp', 'fp', 'fn', 'tn']
     stats = {
-        'tp': 0,
-        'fp': 0,
-        'fn': 0,
-        'tn': 0,
+        prediction_type: torch.Tensor([0])
+        for prediction_type in prediction_types
     }
     for batch in tqdm.tqdm(data_loader):
         images, masks = batch
@@ -149,18 +154,17 @@ def train_epoch(
 
 
 def val_epoch(
-    config,
-    model,
-    criterion,
-    data_loader,
-):
+    config: BaseConfig,
+    model: torch.nn.Module,
+    criterion: torch.nn.Module,
+    data_loader: DataLoader,
+) -> Tuple[Dict[str, torch.Tensor], float]:
     model.eval()
     total_loss = 0
+    prediction_types = ['tp', 'fp', 'fn', 'tn']
     stats = {
-        'tp': 0,
-        'fp': 0,
-        'fn': 0,
-        'tn': 0,
+        prediction_type: torch.Tensor([0])
+        for prediction_type in prediction_types
     }
     with torch.no_grad():
         for batch in tqdm.tqdm(data_loader):
@@ -177,11 +181,11 @@ def val_epoch(
 
 
 def update_stats(
-    config,
-    outputs,
-    masks,
-    stats,
-):
+    config: BaseConfig,
+    outputs: torch.Tensor,
+    masks: torch.Tensor,
+    stats: Dict[str, torch.Tensor],
+) -> Dict[str, torch.Tensor]:
     masks = masks.int()
     batch_stats = smp.metrics.get_stats(
         outputs,
@@ -196,7 +200,9 @@ def update_stats(
     return stats
 
 
-def calculate_metrics(stats):
+def calculate_metrics(
+    stats: Dict[str, torch.Tensor],
+) -> float:
     return smp.metrics.f1_score(
         stats['tp'],
         stats['fp'],
@@ -206,7 +212,7 @@ def calculate_metrics(stats):
     ).item()
 
 
-def get_logger():
+def get_logger() -> logging.Logger:
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter(

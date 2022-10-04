@@ -1,7 +1,11 @@
 import albumentations as al
 
+from config import BaseConfig
 
-def get_train_augmentation(config):
+
+def get_train_augmentation(
+    config: BaseConfig,
+) -> al.Compose:
     return al.Compose(
         [
             al.PadIfNeeded(
@@ -30,7 +34,9 @@ def get_train_augmentation(config):
     )
 
 
-def get_val_augmentation(config):
+def get_val_augmentation(
+    config: BaseConfig,
+) -> al.Compose:
     return al.Compose(
         [
             al.PadIfNeeded(
