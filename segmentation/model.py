@@ -8,6 +8,10 @@ def get_model(config):
         return smp.Unet(
             **config.get_model_config(),
         )
+    elif config.segmentation_model == 'deeplabv3+':
+        return smp.DeepLabV3Plus(
+            **config.get_model_config(),
+        )
     else:
         NotImplementedError('Unexpected segmentation model class.')
 
