@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 from torch.utils.data import Dataset as BaseDataset
 from tqdm import tqdm
 
-from config import BaseConfig
+from segmentation.config import BaseConfig
 
 
 class Dataset(BaseDataset):

@@ -1,6 +1,6 @@
 import albumentations as al
 
-from config import BaseConfig
+from segmentation.config import BaseConfig
 
 
 def get_train_augmentation(

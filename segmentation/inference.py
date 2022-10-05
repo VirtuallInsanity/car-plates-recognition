@@ -5,11 +5,11 @@ from typing import List, Tuple
 import cv2
 import numpy as np
 import torch
-from augmentation import get_val_augmentation
-from preprocessing import get_preprocessing
 
-import config as configs
-from config import BaseConfig
+from segmentation import config as configs
+from segmentation.augmentation import get_val_augmentation
+from segmentation.config import BaseConfig
+from segmentation.preprocessing import get_preprocessing
 
 
 def main() -> None:

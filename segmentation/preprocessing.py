@@ -2,7 +2,7 @@ import albumentations as al
 import segmentation_models_pytorch as smp
 from albumentations.pytorch.transforms import ToTensorV2
 
-from config import BaseConfig
+from segmentation.config import BaseConfig
 
 
 def get_preprocessing(config: BaseConfig) -> al.Compose:

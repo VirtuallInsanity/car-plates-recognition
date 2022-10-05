@@ -6,7 +6,7 @@ from segmentation_models_pytorch.base.model import SegmentationModel
 from torch.nn import BCEWithLogitsLoss
 from torch.optim import AdamW, Optimizer
 
-from config import BaseConfig
+from segmentation.config import BaseConfig
 
 
 def get_model(config: BaseConfig) -> SegmentationModel:

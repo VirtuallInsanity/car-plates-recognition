@@ -11,9 +11,9 @@ from model import get_loss, get_model, get_optimizer
 from preprocessing import get_preprocessing
 from torch.utils.data import DataLoader
 
-import config as configs
-from config import BaseConfig
-from data import get_data_loaders, get_datasets
+from segmentation import config as configs
+from segmentation.config import BaseConfig
+from segmentation.data import get_data_loaders, get_datasets
 
 
 def main() -> None:
