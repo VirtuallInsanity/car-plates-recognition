@@ -1,6 +1,6 @@
 import os
 from argparse import ArgumentParser, Namespace
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import cv2
 import numpy as np
@@ -12,15 +12,30 @@ from segmentation.config import BaseConfig
 from segmentation.preprocessing import get_preprocessing
 
 
-def main() -> None:
+def predict(
+    image_filepath: Optional[str] = None,
+    output_dir: Optional[str] = None,
+    checkpoint_filepath: Optional[str] = None,
+    device_name: str = 'cpu',
+) -> List[str]:
     config = configs.BaseConfig()
-    args = parse_arguments()
+    console_run = (
+        image_filepath is None and
+        output_dir is None and
+        checkpoint_filepath is None
+    )
+    if console_run:
+        args = parse_arguments()
+        image_filepath = args.image_filepath
+        output_dir = args.output_dir
+        checkpoint_filepath = args.checkpoint_filepath
+        device_name = args.device_name
 
-    device = torch.device(args.device_name)
-    model = load_model(args.checkpoint_filepath, device)
+    device = torch.device(device_name)
+    model = load_model(checkpoint_filepath, device)
     model.eval()
 
-    image = cv2.imread(args.image_filepath)
+    image = cv2.imread(image_filepath)
     preprocessed_image = preprocess_image(config, image).to(device)
 
     with torch.no_grad():
@@ -31,18 +46,21 @@ def main() -> None:
         config.min_output_image_width,
         config.min_output_image_height,
     )
+    output_filepaths = []
     for idx, box in enumerate(boxes):
         output_size = (config.output_image_width, config.output_image_height)
         output_image = crop_image(image, order_points(box), output_size)
-        _, extension = os.path.basename(args.image_filepath).split('.')
-        save_image(
+        _, extension = os.path.basename(image_filepath).split('.')
+        output_filepath = save_image(
             output_image,
             '{0}.{1}'.format(
                 idx,
                 extension,
             ),
-            args.output_dir,
+            output_dir,
         )
+        output_filepaths.append(output_filepath)
+    return output_filepaths
 
 
 def parse_arguments() -> Namespace:
@@ -162,13 +180,14 @@ def save_image(
     image: np.ndarray,
     filename: str,
     output_dir: str,
-) -> None:
+) -> str:
     filepath = os.path.join(
         output_dir,
         filename,
     )
     cv2.imwrite(filepath, image)
+    return filepath
 
 
 if __name__ == '__main__':
-    main()
+    predict()
