@@ -1,19 +1,19 @@
+import tqdm
+import numpy as np
+import cv2
+from argparse import ArgumentParser
+import json
 import os
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), os.path.pardir))
 
-import json
-from argparse import ArgumentParser
-
-import cv2
-import numpy as np
-import tqdm
-
 
 def parse_arguments():
     parser = ArgumentParser()
-    parser.add_argument("data_dir", help="Path to dir containing 'train/', 'test/', 'train.json'.")
+    parser.add_argument(
+        "data_dir",
+        help="Path to dir containing 'train/', 'test/', 'train.json'.")
     return parser.parse_args()
 
 
@@ -42,18 +42,24 @@ def main(args):
         for num in nums:
             bbox = np.asarray(num["box"])
             if bbox[0][1] <= bbox[1][1]:
-                x_center = round(((bbox[1][0] - bbox[0][0]) / 2 + bbox[0][0]) / image.shape[1], 6)
-                y_center = round(((bbox[2][1] - bbox[0][1]) / 2 + bbox[0][1]) / image.shape[0], 6)
+                x_center = round(
+                    ((bbox[1][0] - bbox[0][0]) / 2 + bbox[0][0]) / image.shape[1], 6)
+                y_center = round(
+                    ((bbox[2][1] - bbox[0][1]) / 2 + bbox[0][1]) / image.shape[0], 6)
 
                 w = round((bbox[1][0] - bbox[0][0]) / image.shape[1], 6)
                 h = round((bbox[2][1] - bbox[0][1]) / image.shape[0], 6)
             else:
-                x_center = round(((bbox[1][0] - bbox[0][0]) / 2 + bbox[0][0]) / image.shape[1], 6)
-                y_center = round(((bbox[3][1] - bbox[1][1]) / 2 + bbox[1][1]) / image.shape[0], 6)
+                x_center = round(
+                    ((bbox[1][0] - bbox[0][0]) / 2 + bbox[0][0]) / image.shape[1], 6)
+                y_center = round(
+                    ((bbox[3][1] - bbox[1][1]) / 2 + bbox[1][1]) / image.shape[0], 6)
 
                 w = round((bbox[1][0] - bbox[0][0]) / image.shape[1], 6)
                 h = round((bbox[3][1] - bbox[1][1]) / image.shape[0], 6)
-            print("x_center: {}, y_center: {}, width: {}, height: {}".format(x_center, y_center, w, h))
+            print(
+                "x_center: {}, y_center: {}, width: {}, height: {}".format(
+                    x_center, y_center, w, h))
 
             if last_txt_filename == image_base:
                 with open(os.path.join(args.data_dir, txt_filename), "a+") as file:
