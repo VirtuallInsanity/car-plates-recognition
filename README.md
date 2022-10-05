@@ -86,12 +86,13 @@ augmentation = al.PadIfNeeded
 )
 ```
 ### Результаты
-| Model      | Image size | F1 score validation |
-| :--------: | :--------: | :-----------------: |
-| Unet       | 320x320    | 0.92688             |
-| Unet       | 480x480    | 0.93687             |
-| DeepLabV3+ | 320x320    | in progress...      |
-| DeepLabV3+ | 480x480    | in progress...      |
+| Model      | Encoder         | Image size | F1 score validation |
+| :--------: | :-------------: | :--------: | :-----------------: |
+| Unet       | ResNet-18       | 320x320    | 0.92688             |
+| Unet       | ResNet-18       | 480x480    | 0.93687             |
+| DeepLabV3+ | ResNet-18       | 320x320    | 0.92314             |
+| DeepLabV3+ | ResNet-18       | 480x480    | 0.9243              |
+| Unet       | EfficientNet B3 | 480x480    | 0.93004             |
 
 # OCR
 Для решения задачи OCR использовался датасет [Nomeroff Russian license plates](https://www.kaggle.com/datasets/evgrafovmaxim/nomeroff-russian-license-plates). Задача OCR была разделена на две подзадачи:
