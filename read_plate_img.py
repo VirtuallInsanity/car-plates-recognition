@@ -7,6 +7,7 @@ import OCR.Tesseract.use_model
 
 from car_plates.detect_plates_yolov5 import inference_yolov5
 from car_plates.detect_plates_yolov7 import inference_yolov7
+from segmentation.inference import predict
 
 dirpath = Path('runs')
 if dirpath.exists() and dirpath.is_dir():
@@ -24,8 +25,11 @@ if detection_model == 'yolov5':
 elif detection_model == 'yolov7':
     cropped_imgs_path = inference_yolov7(filename, weights_path=weights)
 elif detection_model == 'segmentator':
-    # TO-DO
-    pass
+    cropped_imgs_path = predict(
+        filename,
+        'outputs',
+        weights,
+    )
 else:
     print("Incorrect detection model! Choose from: yolov5, yolov7, segmentator")
     exit()
