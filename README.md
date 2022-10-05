@@ -12,6 +12,27 @@
 
 Скачать веса, данные для теста и посмотреть исходыне данные: https://drive.google.com/drive/folders/1oxzpehwLPBXs81VrEGzPs4b73ADVO5C3?usp=sharing
 
+Вывод детекции нейронных сетей:
+| **yolov7** | **yolov5** |
+|----------------|---------|
+| ![car1-resize](https://user-images.githubusercontent.com/48131753/194024210-031ddfe7-5c06-42bf-bce1-4ab3aa76af8f.jpg) |![car1-resize2](https://user-images.githubusercontent.com/48131753/194024776-c45b288c-1f54-4339-bf57-a689b122acc8.jpg) |
+
+Вывод детекции нейронных сетей:
+| **yolov7** | **yolov5** |
+|----------------|---------|
+| 640x640 | 640x640 |
+| lr0=0.01 | lr0=0.01 |
+| lrf=0.1 | lrf=0.01 |
+| momentum=0.937 | momentum=0.937 |
+| weight_decay=0.0005 | weight_decay=0.0005 |
+|  **optimizer: adam** | **optimizer: SGD(no decay)** |
+
+Вывод быстродействия на одном изображении:
+| **yolov7 inference** | **yolov5 inference** |
+|----------------|---------|
+| 1 carplate, Speed: 1640.3ms, Inference: 0.7ms NMS | 1 carplate, Speed: 0.5ms pre-process, 11.8ms inference, 1.4ms NMS |
+
+
 # Plates segmentation
 ### Датасет
 Для обучения и валидации модели были использованы данные из этого [соревнования](https://www.kaggle.com/competitions/vkcv2022-contest-02-carplates). Для валидации использовалось 5% изображений.
