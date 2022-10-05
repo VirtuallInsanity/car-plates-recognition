@@ -36,6 +36,10 @@ def predict(
     model.eval()
 
     image = cv2.imread(image_filepath)
+
+    augmentation = get_val_augmentation(config)
+    image = augmentation(image=image)['image']
+
     preprocessed_image = preprocess_image(config, image).to(device)
 
     with torch.no_grad():
