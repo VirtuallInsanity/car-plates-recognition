@@ -1,9 +1,12 @@
+"""Configuration to store experiment settings."""
 from typing import Any, Dict, List
 
 import torch
 
 
 class BaseConfig(object):
+    """Base configuration class that can be extended."""
+
     # core
     classes: List[str] = ['car']
     seed: int = 42
@@ -55,6 +58,10 @@ class BaseConfig(object):
     metric: str = 'iou_score'
 
     def get_model_config(self) -> Dict[str, Any]:
+        """Get segmentation model config.
+
+        :return: dict with model configuration
+        """
         return {
             'encoder_name': self.encoder_name,
             'encoder_weights': self.encoder_weights,

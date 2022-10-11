@@ -1,3 +1,4 @@
+"""Model utils."""
 from typing import Iterable
 
 import segmentation_models_pytorch as smp
@@ -10,6 +11,11 @@ from segmentation.config import BaseConfig
 
 
 def get_model(config: BaseConfig) -> SegmentationModel:
+    """Get segmentation model.
+
+    :param config: experiment config
+    :return: segmentation model
+    """
     if config.segmentation_model == 'unet':
         return smp.Unet(
             **config.get_model_config(),
@@ -26,6 +32,12 @@ def get_optimizer(
     config: BaseConfig,
     model_parameters: Iterable[torch.Tensor],
 ) -> Optimizer:
+    """Get optimizer.
+
+    :param config: experiment config
+    :param model_parameters: model parameters to optimize
+    :return: optimizer
+    """
     return AdamW(
         params=model_parameters,
         lr=config.learning_rate,
@@ -33,4 +45,8 @@ def get_optimizer(
 
 
 def get_loss() -> torch.nn.Module:
+    """Get loss function.
+
+    :return: loss function
+    """
     return BCEWithLogitsLoss()

@@ -1,3 +1,4 @@
+"""Data utils module."""
 import os
 from typing import Dict, List, Optional, Tuple
 
@@ -14,6 +15,8 @@ from segmentation.config import BaseConfig
 
 
 class Dataset(BaseDataset):
+    """Dataset for segmentation task."""
+
     def __init__(
         self,
         image_dir: str,
@@ -22,6 +25,14 @@ class Dataset(BaseDataset):
         augmentation: Optional[al.Compose] = None,
         preprocessing: Optional[al.Compose] = None,
      ):
+        """Init dataset class.
+
+        :param image_dir: path to dir with images
+        :param mask_dir: path to dir with masks
+        :param metadata: data about samples
+        :param augmentation: augmentation pipeline
+        :param preprocessing: preprocessing pipeline
+        """
         self.image_dir = image_dir
         self.mask_dir = mask_dir
         self.metadata = metadata
@@ -33,12 +44,18 @@ class Dataset(BaseDataset):
         self._process_masks()
 
     def __len__(self) -> int:
+        """Get dataset length."""
         return len(self.image_filepaths)
 
     def __getitem__(
         self,
         idx: int,
     ) -> Tuple[torch.FloatTensor, torch.FloatTensor]:
+        """Get sample by index.
+
+        :param idx: index
+        :return: image and mask
+        """
         image_filepath = self.image_filepaths[idx]
         mask_filepath = self.mask_filepaths[idx]
         image = cv2.imread(
@@ -58,10 +75,12 @@ class Dataset(BaseDataset):
         return image.float(), mask.float()
 
     def _prepare_dirs(self) -> None:
+        """Prepare dirs for dataset."""
         if not os.path.exists(self.mask_dir):
             os.makedirs(self.mask_dir)
 
     def _process_masks(self) -> None:
+        """Generate masks for dataset images."""
         for sample in tqdm(self.metadata):
             filename = os.path.basename(sample['file'])
             image_filepath = os.path.join(
@@ -94,6 +113,13 @@ def get_data_loaders(
     train_dataset: BaseDataset,
     val_dataset: BaseDataset,
 ) -> Tuple[DataLoader, DataLoader]:
+    """Get train and validation data loaders.
+
+    :param config: experiment config
+    :param train_dataset: train dataset
+    :param val_dataset: validation dataset
+    :return: two data loaders
+    """
     train_loader = DataLoader(
         train_dataset,
         batch_size=config.train_batch_size,
@@ -117,6 +143,14 @@ def get_datasets(
     augmentation: Dict[str, al.Compose],
     preprocessing: Dict[str, al.Compose],
 ) -> Tuple[Dataset, Dataset]:
+    """Get train and validation datasets.
+
+    :param config: experiment config
+    :param metadata: metadata about samples
+    :param augmentation: augmentation pipeline
+    :param preprocessing: preprocessing pipeline
+    :return: two datasets
+    """
     train_metadata, val_metadata = train_test_split(
         metadata,
         test_size=config.val_size,

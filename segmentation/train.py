@@ -1,3 +1,4 @@
+"""Train logic."""
 import json
 import logging
 import os
@@ -17,6 +18,7 @@ from segmentation.data import get_data_loaders, get_datasets
 
 
 def main() -> None:
+    """Train segmentation model."""
     logger = get_logger()
     config = configs.BaseConfig()
     metadata = load_metadata(config)
@@ -97,6 +99,11 @@ def main() -> None:
 
 
 def load_metadata(config: BaseConfig) -> List[Dict]:
+    """Load metadata.
+
+    :param config: experiment config
+    :return: data about samples
+    """
     with open(
         config.metadata_filepath,
         'r',
@@ -109,6 +116,11 @@ def save_model(
     config: BaseConfig,
     model: torch.nn.Module,
 ) -> None:
+    """Save given model.
+
+    :param config: experiment config
+    :param model: model to save
+    """
     torch.save(
         model,
         os.path.join(
@@ -119,6 +131,10 @@ def save_model(
 
 
 def prepare_dirs(config: BaseConfig) -> None:
+    """Prepare dirs for model training.
+
+    :param config: experiment config
+    """
     if not os.path.exists(config.checkpoint_dir):
         os.makedirs(config.checkpoint_dir)
 
@@ -130,6 +146,15 @@ def train_epoch(
     criterion: torch.nn.Module,
     data_loader: DataLoader,
 ) -> Tuple[Dict[str, torch.Tensor], float]:
+    """Train one epoch.
+
+    :param config: experiment config
+    :param model: segmentation model
+    :param optimizer: optimizer
+    :param criterion: loss function
+    :param data_loader: data loader
+    :return: training metrics
+    """
     model.train()
     total_loss = 0
     prediction_types = ['tp', 'fp', 'fn', 'tn']
@@ -159,6 +184,14 @@ def val_epoch(
     criterion: torch.nn.Module,
     data_loader: DataLoader,
 ) -> Tuple[Dict[str, torch.Tensor], float]:
+    """Validate one epoch.
+
+    :param config: experiment config
+    :param model: segmentation model
+    :param criterion: loss function
+    :param data_loader: data loader
+    :return: validation metrics
+    """
     model.eval()
     total_loss = 0
     prediction_types = ['tp', 'fp', 'fn', 'tn']
@@ -186,6 +219,14 @@ def update_stats(
     masks: torch.Tensor,
     stats: Dict[str, torch.Tensor],
 ) -> Dict[str, torch.Tensor]:
+    """Update stats after another step.
+
+    :param config: experiment config
+    :param outputs: predicted masks
+    :param masks: GT masks
+    :param stats: stats
+    :return: updated stats
+    """
     masks = masks.int()
     batch_stats = smp.metrics.get_stats(
         outputs,
@@ -203,6 +244,11 @@ def update_stats(
 def calculate_metrics(
     stats: Dict[str, torch.Tensor],
 ) -> float:
+    """Calculate metrics.
+
+    :param stats: dict with model predictions
+    :return: metrics
+    """
     return smp.metrics.f1_score(
         stats['tp'],
         stats['fp'],
@@ -213,6 +259,10 @@ def calculate_metrics(
 
 
 def get_logger() -> logging.Logger:
+    """Get logger.
+
+    :return: logger for experiment run
+    """
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter(

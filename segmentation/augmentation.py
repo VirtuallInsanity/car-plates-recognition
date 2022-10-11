@@ -1,3 +1,4 @@
+"""Utils for data augmentation."""
 import albumentations as al
 
 from segmentation.config import BaseConfig
@@ -6,6 +7,11 @@ from segmentation.config import BaseConfig
 def get_train_augmentation(
     config: BaseConfig,
 ) -> al.Compose:
+    """Get train augmentation pipeline.
+
+    :param config: experiment configuration
+    :return: augmentation pipeline
+    """
     return al.Compose(
         [
             al.PadIfNeeded(
@@ -37,6 +43,11 @@ def get_train_augmentation(
 def get_val_augmentation(
     config: BaseConfig,
 ) -> al.Compose:
+    """Get validation augmentation pipeline.
+
+    :param config: experiment configuration
+    :return: augmentation pipeline
+    """
     return al.Compose(
         [
             al.PadIfNeeded(

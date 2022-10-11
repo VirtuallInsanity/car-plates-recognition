@@ -1,3 +1,4 @@
+"""Inference logic."""
 import os
 from argparse import ArgumentParser, Namespace
 from typing import List, Optional, Tuple
@@ -18,6 +19,14 @@ def predict(
     checkpoint_filepath: Optional[str] = None,
     device_name: str = 'cpu',
 ) -> List[str]:
+    """Get prediction of segmentation model.
+
+    :param image_filepath: path to input image
+    :param output_dir: dir to save results
+    :param checkpoint_filepath: model weights filepath
+    :param device_name: device to use for inference
+    :return: filepaths with result
+    """
     config = configs.BaseConfig()
     console_run = (
         image_filepath is None and
@@ -68,6 +77,10 @@ def predict(
 
 
 def parse_arguments() -> Namespace:
+    """Parse CLI arguments.
+
+    :return: namespace with arguments
+    """
     parser = ArgumentParser()
     parser.add_argument(
         '-d',
@@ -104,6 +117,12 @@ def load_model(
     checkpoint_filepath: str,
     device: torch.device,
 ) -> torch.nn.Module:
+    """Load model.
+
+    :param checkpoint_filepath: model weights filepath
+    :param device:
+    :return: loaded model
+    """
     return torch.load(
         checkpoint_filepath,
         map_location=device,
@@ -114,6 +133,12 @@ def preprocess_image(
     config: BaseConfig,
     image: np.ndarray,
 ) -> torch.FloatTensor:
+    """Preprocess image.
+
+    :param config: experiment config
+    :param image: image for preprocessing
+    :return: preprocessed image
+    """
     augmentation = get_val_augmentation(config)
     preprocessing = get_preprocessing(config)
     aug_image = augmentation(image=image)['image']
@@ -126,6 +151,13 @@ def get_boxes_form_mask(
     min_width: int,
     min_height: int,
 ) -> List[np.ndarray]:
+    """Get boxes from segmentation mask.
+
+    :param mask: image with mask
+    :param min_width: min box width
+    :param min_height: min boc height
+    :return: list of car plate boxes
+    """
     contours, _ = cv2.findContours(
         mask,
         cv2.RETR_EXTERNAL,
@@ -143,6 +175,11 @@ def get_boxes_form_mask(
 
 
 def order_points(points: np.ndarray) -> np.ndarray:
+    """Order points if clockwise order.
+
+    :param points: points to order
+    :return: ordered points
+    """
     rect = np.zeros((4, 2))
     sums = points.sum(axis=1)
     rect[0] = points[np.argmin(sums)]
@@ -154,6 +191,10 @@ def order_points(points: np.ndarray) -> np.ndarray:
 
 
 def prepare_dirs(output_dir: str) -> None:
+    """Prepare dirs for inference.
+
+    :param output_dir: dir for inference results
+    """
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -163,6 +204,13 @@ def crop_image(
     box: np.ndarray,
     output_size: Tuple[int, int],
 ) -> np.ndarray:
+    """Crop given image.
+
+    :param image: image to crop
+    :param box: coordinates of crop
+    :param output_size: destination size
+    :return: cropped image
+    """
     dst = np.asarray(
         [
             [0, 0],
@@ -185,6 +233,13 @@ def save_image(
     filename: str,
     output_dir: str,
 ) -> str:
+    """Save given image.
+
+    :param image: image to save
+    :param filename: filename
+    :param output_dir: dir to save image
+    :return: filepath of saved image
+    """
     filepath = os.path.join(
         output_dir,
         filename,
