@@ -9,6 +9,7 @@ from car_plates.detect_plates_yolov5 import inference_yolov5
 from car_plates.detect_plates_yolov7 import inference_yolov7
 from segmentation.inference import predict
 
+# delete created directory after inference
 dirpath = Path('runs')
 if dirpath.exists() and dirpath.is_dir():
     shutil.rmtree(dirpath)
@@ -18,6 +19,7 @@ config.read("config.ini", encoding='utf-8')
 
 filename = config['Input']['filepath']
 
+# choose model and use path to weights from config
 detection_model = config['Detection']['model']
 weights = config['Detection']['weights_path']
 if detection_model == 'yolov5':
@@ -34,6 +36,7 @@ else:
     print("Incorrect detection model! Choose from: yolov5, yolov7, segmentator")
     exit()
 
+# read car plate from file and choose OCR model
 for cropped_img in cropped_imgs_path:
     image = cv2.imread(cropped_img)
     image = cv2.resize(image, (400, 90))

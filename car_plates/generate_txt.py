@@ -18,6 +18,11 @@ def parse_arguments():
 
 
 def main(args):
+    """
+    Create yolo annotation in .txt format for each image
+
+    :param args: Path to dir
+    """
     config_filename = os.path.join(args.data_dir, "train.json")
     with open(config_filename, "rt") as fp:
         config = json.load(fp)
