@@ -2,6 +2,16 @@
 
 В файле ***read_plate_img.py*** происходит детекция номера на изображении с помощью yolov5/yolov7, а затем считывание символов припомощи CNN/Tesseract с обнаруженных номеров.
 
+### Запуск распознавания
+1. Используя файл можно установить зависимости requirements.txt:
+
+    <code>python -m pip install -r requirements.txt</code>
+
+2. Скачать обученные модели и сохранить их в соответсвующие папки указав пути к ним в файле **config.ini**.
+3. Выбрать модели и указать путь к файлу для распознаванию в файле **config.ini**.
+4. Запустить ***read_plate_img.py***. Результат выводится в консоль и распознавание сохранятеся в папку **runs**.
+
+
 # Plates detection
 В папке ***car_plates*** находятся следующие файлы:
 - ***car_plates/detect_plates_yolov5.py*** содержит метод для использования нейронной сети yolov5 от [ultralytics](https://github.com/ultralytics/yolov5)
@@ -17,15 +27,15 @@
 |----------------|---------|
 | ![car1-resize](https://user-images.githubusercontent.com/48131753/194024210-031ddfe7-5c06-42bf-bce1-4ab3aa76af8f.jpg) |![car1-resize2](https://user-images.githubusercontent.com/48131753/194024776-c45b288c-1f54-4339-bf57-a689b122acc8.jpg) |
 
-Вывод детекции нейронных сетей:
-| **yolov7** | **yolov5** |
-|----------------|---------|
-| 640x640 | 640x640 |
-| lr0=0.01 | lr0=0.01 |
-| lrf=0.1 | lrf=0.01 |
-| momentum=0.937 | momentum=0.937 |
-| weight_decay=0.0005 | weight_decay=0.0005 |
-|  **optimizer: adam** | **optimizer: SGD(no decay)** |
+Параметры используемых нейронных сетей:
+| **parameters** | **yolov7** | **yolov5** |
+|----------------|---------|---------|
+| **image size** | 640x640 | 640x640 |
+| **learning rate initial** | 0.01 | 0.01 |
+| **learning rate final** | 0.1 | 0.01 |
+| **momentum** | 0.937 | 0.937 |
+| **weight_decay** | 0.0005 | 0.0005 |
+| **optimizer** | adam | SGD(no decay) |
 
 Вывод быстродействия на одном изображении:
 | **yolov7 inference** | **yolov5 inference** |
