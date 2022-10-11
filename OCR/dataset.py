@@ -1,51 +1,72 @@
-import numpy as np
-import cv2
-import os
+# -*- coding: utf-8 -*-
+"""dataset.py
+
+Create letters symbols dataset from dataset
+https://www.kaggle.com/datasets/evgrafovmaxim/nomeroff-russian-license-plates
+"""
 import json
+import os
 
-def find_contours(dimensions, img) :
+import cv2
+import numpy as np
 
-    cntrs, _ = cv2.findContours(img.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+def find_contours(dimensions, img):
+    """
+ Find letters symbols contours
+ :param dimensions: allowed character size
+ :param img: image after preprocessing
+ :returns: array with letters symbols contours
+ """
+    cntrs, _ = cv2.findContours(
+        img.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE,
+    )
 
     lower_width = dimensions[0]
     upper_width = dimensions[1]
     lower_height = dimensions[2]
     upper_height = dimensions[3]
-    
-    cntrs = sorted(cntrs, key=cv2.contourArea, reverse=True)[:15]
-    
+
+    max_count_cntrs = 15
+    cntrs = sorted(cntrs, key=cv2.contourArea, reverse=True)[:max_count_cntrs]
+
     ii = cv2.imread('contour.jpg')
-    
-    #Finding suitable contours
+
+    # Finding suitable contours
     x_cntr_list = []
-    target_contours = []
     img_res = []
     cntrs_int = []
-    for cntr in cntrs :
-        intX, intY, intWidth, intHeight = cv2.boundingRect(cntr)
-        if intWidth > lower_width and intWidth < upper_width and intHeight > lower_height and intHeight < upper_height:
-            cntrs_int.append(cntr)
-    
-    #Deleting nested contours
+    for cntr1 in cntrs:
+        int_x, int_y, int_width, int_height = cv2.boundingRect(cntr1)
+        if (lower_width < int_width < upper_width):
+            if (lower_height < int_height < upper_height):
+                cntrs_int.append(cntr1)
+
+    # Deleting nested contours
     cntrs_last = []
-    for cntr in cntrs_int:
-        intX, intY, intWidth, intHeight = cv2.boundingRect(cntr)
-        point = (intX, intY)
-        cntrs_last.append(cntr)
+    for cntr2 in cntrs_int:
+        int_x, int_y, int_width, int_height = cv2.boundingRect(cntr2)
+        point = (int_x, int_y)
+        cntrs_last.append(cntr2)
         for cntrout in cntrs_int:
-            if (cv2.boundingRect(cntrout) != cv2.boundingRect(cntr)) and (cv2.pointPolygonTest(cntrout, point, False) >= 0):
-                cntrs_last.pop()
-                break
-    
-    for cntr in cntrs_last:     
-        intX, intY, intWidth, intHeight = cv2.boundingRect(cntr)
+            if (cv2.boundingRect(cntrout) != cv2.boundingRect(cntr2)):
+                if (cv2.pointPolygonTest(cntrout, point) >= 0):
+                    cntrs_last.pop()
+                    break
 
-        x_cntr_list.append(intX) 
+    for cntr3 in cntrs_last:
+        int_x, int_y, int_width, int_height = cv2.boundingRect(cntr3)
 
-        char_copy = np.zeros((44,24))
-        char = img[intY:intY+intHeight, intX:intX+intWidth]
+        x_cntr_list.append(int_x)
+
+        char_copy = np.zeros((44, 24))
+        char = img[int_y:int_y + int_height, int_x:int_x + int_width]
         char = cv2.resize(char, (20, 40))
-        cv2.rectangle(ii, (intX,intY), (intWidth+intX, intY+intHeight), (50,21,200), 2)
+        cv2.rectangle(
+            ii, (int_x, int_y),
+            (int_width + int_x, int_y + int_height),
+            (50, 21, 200), 2,
+        )
         char = cv2.subtract(255, char)
 
         char_copy[2:42, 2:22] = char
@@ -54,83 +75,129 @@ def find_contours(dimensions, img) :
         char_copy[42:44, :] = 0
         char_copy[:, 22:24] = 0
 
-        img_res.append(char_copy) 
-        
+        img_res.append(char_copy)
+
     indices = sorted(range(len(x_cntr_list)), key=lambda k: x_cntr_list[k])
     img_res_copy = []
     for idx in indices:
         img_res_copy.append(img_res[idx])
-    img_res = np.array(img_res_copy)
 
-    return img_res
+    return np.array(img_res_copy)
 
-def segment_characters(image) :
 
+def segment_characters(image):
+    """
+ Segment characters and find letters symbols contours
+ :param image: original image
+ :returns: array with letters symbols contours
+ """
     img_lp = cv2.resize(image, (333, 75))
-    img_gray_lp = cv2.cvtColor(img_lp, cv2.COLOR_BGR2GRAY)
-    _, img_binary_lp = cv2.threshold(img_gray_lp, 200, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-    img_binary_lp = cv2.erode(img_binary_lp, (3,3))
-    img_binary_lp = cv2.dilate(img_binary_lp, (3,3))
-    img_binary_lp = cv2.dilate(img_binary_lp, (3,3))
+    img_lp = cv2.cvtColor(img_lp, cv2.COLOR_BGR2GRAY)
+    _, img_lp = cv2.threshold(
+        img_lp, 200, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,
+    )
+    img_lp = cv2.erode(img_lp, (3, 3))
+    img_lp = cv2.dilate(img_lp, (3, 3))
+    img_lp = cv2.dilate(img_lp, (3, 3))
 
-    LP_WIDTH = img_binary_lp.shape[0]
-    LP_HEIGHT = img_binary_lp.shape[1]
-    #cutting edges
-    img_binary_lp[0:10,:] = 255
-    img_binary_lp[:,0:20] = 255
-    img_binary_lp[72:75,:] = 255
-    img_binary_lp[:,330:333] = 255
-    #allowed character size
-    dimensions = [LP_WIDTH/8,
-                  LP_WIDTH/2,
-                  LP_HEIGHT/15,
-                  5*LP_HEIGHT/6]
-    
-    char_list = find_contours(dimensions, img_binary_lp)
+    lp_width = img_lp.shape[0]
+    lp_height = img_lp.shape[1]
+    # cutting edges
+    img_lp[0:10, :] = 255
+    img_lp[:, 0:20] = 255
+    img_lp[72:75, :] = 255
+    img_lp[:, 330:333] = 255
+    # allowed character size
+    dimensions = [
+        lp_width / 8,
+        lp_width / 2,
+        lp_height / 15,
+        5 * lp_height / 6,
+        ]
 
-    return char_list
+    return find_contours(dimensions, img_lp)
+
 
 train_symbols = []
-path_json = './nomeroff-russian-license-plates/autoriaNumberplateOcrRu-2021-09-01/train/ann/'
-for dirname, _, filenames in os.walk('./nomeroff-russian-license-plates/autoriaNumberplateOcrRu-2021-09-01/train/img'):
+path = './autoriaNumberplateOcrRu-2021-09-01/train/'
+path_json = '{0}ann/'.format(path)
+for dirname, _, filenames in os.walk('{0}img'.format(path)):
     for filename in filenames:
         name = json.load(open(path_json + filename.replace('.png', '.json')))
-        train_symbols.append((os.path.join(dirname, filename), name['description']))
-#create train dataset
-for i in range(len(train_symbols)):
-    char = segment_characters(cv2.imread(train_symbols[i][0]))
-    if len(char) == (len(train_symbols[i][1])):
-        for j in range(len(train_symbols[i][1])):
-            if (os.path.exists('./train/class_' + train_symbols[i][1][j]) == False):
-                os.mkdir('./train/class_' + train_symbols[i][1][j])
-            cv2.imwrite('./train/class_' + train_symbols[i][1][j] + '/' + train_symbols[i][1] + '_' + str(j) + '.jpg', char[j])
+        train_symbols.append(
+            os.path.join(dirname, filename),
+            name['description'],
+        )
+# create train dataset
+for index, _ in enumerate(train_symbols):
+    char = segment_characters(cv2.imread(train_symbols[index][0]))
+    if len(char) == (len(train_symbols[index][1])):
+        for in_index, ch in enumerate(train_symbols[index][1]):
+            if (os.path.exists('./train/class_{0}'.format(ch)) is False):
+                os.mkdir('./train/class_{0}'.format(ch))
+            cv2.imwrite(
+                './train/class_' +
+                train_symbols[index][1][in_index] +
+                '/' +
+                train_symbols[index][1] +
+                '_' +
+                str(in_index) +
+                '.jpg',
+                char[in_index],
+            )
 
 val_symbols = []
-path_json = './nomeroff-russian-license-plates/autoriaNumberplateOcrRu-2021-09-01/val/ann/'
-for dirname, _, filenames in os.walk('./nomeroff-russian-license-plates/autoriaNumberplateOcrRu-2021-09-01/val/img'):
+path = './autoriaNumberplateOcrRu-2021-09-01/val/'
+path_json = '{0}ann/'.format(path)
+for dirname, _, filenames in os.walk('{0}img'.format(path)):
     for filename in filenames:
         name = json.load(open(path_json + filename.replace('.png', '.json')))
-        val_symbols.append((os.path.join(dirname, filename), name['description']))
-#create val dataset
-for i in range(len(val_symbols)):
-    char = segment_characters(cv2.imread(val_symbols[i][0]))
-    if len(char) == (len(val_symbols[i][1])):
-        for j in range(len(val_symbols[i][1])):
-            if (os.path.exists('./val/class_' + val_symbols[i][1][j]) == False):
-                os.mkdir('./val/class_' + val_symbols[i][1][j])
-            cv2.imwrite('./val/class_' + val_symbols[i][1][j] + '/' + val_symbols[i][1] + '_' + str(j) + '.jpg', char[j])
+        val_symbols.append(
+            os.path.join(dirname, filename),
+            name['description'],
+        )
+# create train dataset
+for index, _ in enumerate(val_symbols):
+    char = segment_characters(cv2.imread(val_symbols[index][0]))
+    if len(char) == (len(val_symbols[index][1])):
+        for in_index, ch in enumerate(val_symbols[index][1]):
+            if (os.path.exists('./val/class_{0}'.format(ch)) is False):
+                os.mkdir('./val/class_{0}'.format(ch))
+            cv2.imwrite(
+                './val/class_' +
+                val_symbols[index][1][in_index] +
+                '/' +
+                val_symbols[index][1] +
+                '_' +
+                str(in_index) +
+                '.jpg',
+                char[in_index],
+                )
 
 test_symbols = []
-path_json = '.nomeroff-russian-license-plates/autoriaNumberplateOcrRu-2021-09-01/test/ann/'
-for dirname, _, filenames in os.walk('./nomeroff-russian-license-plates/autoriaNumberplateOcrRu-2021-09-01/test/img'):
+path = './autoriaNumberplateOcrRu-2021-09-01/test/'
+path_json = '{0}ann/'.format(path)
+for dirname, _, filenames in os.walk('{0}img'.format(path)):
     for filename in filenames:
         name = json.load(open(path_json + filename.replace('.png', '.json')))
-        test_symbols.append((os.path.join(dirname, filename), name['description']))
-#create test dataset
-for i in range(len(test_symbols)):
-    char = segment_characters(cv2.imread(test_symbols[i][0]))
-    if len(char) == (len(test_symbols[i][1])):
-        for j in range(len(test_symbols[i][1])):
-            if (os.path.exists('./test/class_' + test_symbols[i][1][j]) == False):
-                os.mkdir('./test/class_' + test_symbols[i][1][j])
-            cv2.imwrite('./test/class_' + test_symbols[i][1][j] + '/' + test_symbols[i][1] + '_' + str(j) + '.jpg', char[j])
+        test_symbols.append(
+            os.path.join(dirname, filename),
+            name['description'],
+        )
+# create train dataset
+for index, _ in enumerate(test_symbols):
+    char = segment_characters(cv2.imread(test_symbols[index][0]))
+    if len(char) == (len(test_symbols[index][1])):
+        for in_index, ch in enumerate(test_symbols[index][1]):
+            if (os.path.exists('./test/class_{0}'.format(ch)) is False):
+                os.mkdir('./test/class_{0}'.format(ch))
+            cv2.imwrite(
+                './test/class_' +
+                test_symbols[index][1][in_index] +
+                '/' +
+                test_symbols[index][1] +
+                '_' +
+                str(in_index) +
+                '.jpg',
+                char[in_index],
+                )
