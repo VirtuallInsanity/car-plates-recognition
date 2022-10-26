@@ -147,7 +147,7 @@ model.add(Dense(22, activation='softmax'))
 model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizers.Adam(lr=0.0001), metrics=[custom_f1score])
 ```
 
-Обучение заняло 80 эпох, результирующий _loss_ на тестовых данных составил около 0,05. Модель сохранена в ***OCR/CNN/model_LicensePlate_1.json*** и ***OCR/CNN/model_LicensePlate_1.h5***
+Обучение заняло 80 эпох, результирующая Accuracy на тестовых данных составил около 0,95. Модель сохранена в ***OCR/CNN/model_LicensePlate_1.json*** и ***OCR/CNN/model_LicensePlate_1.h5***
 
 #### CNN 2
 ```python
@@ -164,29 +164,29 @@ model.add(Dense(36, activation='softmax'))
 model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizers.Adam(lr=0.0001), metrics=[custom_f1score])
 ```
 
-Обучение заняло также 80 эпох, результирующий _loss_ на тестовых данных составил около 0,013. Модель сохранена в ***OCR/CNN/model_LicensePlate_2.json*** и ***OCR/CNN/model_LicensePlate_2.h5***
+Обучение заняло также 80 эпох, результирующая Accuracy на тестовых данных составил около 0.987. Модель сохранена в ***OCR/CNN/model_LicensePlate_2.json*** и ***OCR/CNN/model_LicensePlate_2.h5***
 
 ### Tesseract
 ***OCR/Tesseract/use_model.py*** скрипт использования модели на данных
 
-Результирующий _loss_ на тестовых данных составил около 0,6.
+Результирующая Accuracy на тестовых данных составил около 0,6.
 
 ### Results
-| Модель OCR | Loss на тесте | Время распознавания одного символа, с|
+| Модель OCR | Accuracy | Время распознавания одного символа, с|
 |:----:|:----:|:----------:|
-| CNN 1 | 0.05 | 0.065 |
-| CNN 2 | 0.013 | 0.07 |
-| Tesseract | 0.6 | 0.14 |
+| CNN 1 | 0.95 | 0.065 |
+| CNN 2 | 0.987 | 0.07 |
+| Tesseract | 0.4 | 0.14 |
 
 ### TESTS
 
 #### CNN2, [dataset](https://www.kaggle.com/datasets/evgrafovmaxim/nomeroff-russian-license-plates)
 
-Итоговая точность составила 0.582
+Итоговая точность (Accuracy) составила 0.582
 
 #### CNN2 + Plates segmentation, [dataset](https://www.kaggle.com/competitions/vkcv2022-contest-02-carplates)
 
-Итоговая точность составила 0.126
+Итоговая точность (Accuracy) составила 0.126
 
 #### Resume
 
