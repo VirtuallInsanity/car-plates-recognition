@@ -11,7 +11,10 @@ import numpy as np
 from keras.models import model_from_json
 
 
-def find_contours(dimensions, img):
+def find_contours(
+    dimensions: list,
+    img: numpy.ndarray,
+) -> np.array:
     """
  Find letters symbols contours
  :param dimensions: allowed character size
@@ -85,7 +88,9 @@ def find_contours(dimensions, img):
     return np.array(img_res_copy)
 
 
-def segment_characters(image):
+def segment_characters(
+    image: numpy.ndarray,
+) -> np.array:
     """
  Segment characters and find letters symbols contours
  :param image: original image
@@ -118,7 +123,9 @@ def segment_characters(image):
     return find_contours(dimensions, img_lp)
 
 
-def load_keras_model(model_name):
+def load_keras_model(
+        model_name: str,
+) -> tf.keras.Model:
     """
  Loading pretrained model
  :param model_name: Name .h5, .json formats files pretrained model
@@ -136,7 +143,9 @@ def load_keras_model(model_name):
     return model
 
 
-def fix_dimension(img):
+def fix_dimension(
+        img: numpy.ndarray,
+) -> numpy.ndarray:
     """
  Fix dimension every character's image
  :param img: character's image
@@ -148,7 +157,9 @@ def fix_dimension(img):
     return new_img
 
 
-def show_results(char):
+def show_results(
+        char: numpy.ndarray,
+) -> str:
     """
  OCR and show text's result
  :param char: array with letters symbols contours

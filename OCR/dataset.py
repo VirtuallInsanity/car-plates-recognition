@@ -11,7 +11,10 @@ import cv2
 import numpy as np
 
 
-def find_contours(dimensions, img):
+def find_contours(
+    dimensions: list,
+    img: numpy.ndarray,
+) -> np.array:
     """
  Find letters symbols contours
  :param dimensions: allowed character size
@@ -85,7 +88,9 @@ def find_contours(dimensions, img):
     return np.array(img_res_copy)
 
 
-def segment_characters(image):
+def segment_characters(
+    image: numpy.ndarray,
+) -> np.array:
     """
  Segment characters and find letters symbols contours
  :param image: original image

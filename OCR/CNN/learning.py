@@ -52,12 +52,19 @@ def custom_f1score(y, y_pred):
 
 
 class stopTrainingCallback(tf.keras.callbacks.Callback):
-    def on_epoch_end(self, epoch, logs={}):
+    def on_epoch_end(
+        self,
+        epoch: int,
+        logs: dict = {},
+    ) -> None:
         if(logs.get('val_custom_f1score') > 0.99):
             self.model.stop_training = True
 
 
-def storeKerasModel(model, model_name):
+def storeKerasModel(
+    model: tf.keras.Model,
+    model_name: str,
+) -> None:
     """
  Store pretrained model
  :param model: pretrained keras model

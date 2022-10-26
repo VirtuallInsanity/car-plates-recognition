@@ -9,7 +9,10 @@ import numpy as np
 import pytesseract
 
 
-def find_contours(dimensions, img):
+def find_contours(
+    dimensions: list,
+    img: numpy.ndarray,
+) -> np.array:
     """
  Find letters symbols contours
  :param dimensions: allowed character size
@@ -83,7 +86,9 @@ def find_contours(dimensions, img):
     return np.array(img_res_copy)
 
 
-def segment_characters(image):
+def segment_characters(
+    image: numpy.ndarray,
+) -> np.array:
     """
  Segment characters and find letters symbols contours
  :param image: original image
@@ -116,7 +121,9 @@ def segment_characters(image):
     return find_contours(dimensions, img_lp)
 
 
-def show_results(char):
+def show_results(
+    char: numpy.ndarray,
+) -> str:
     """
  OCR and show text's result
  :param char: array with letters symbols contours
