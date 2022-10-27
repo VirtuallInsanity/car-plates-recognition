@@ -27,7 +27,7 @@
 Вывод детекции нейронных сетей:
 | **yolov7** | **yolov5** |
 |----------------|---------|
-| ![car1-resize](https://user-images.githubusercontent.com/48131753/194024210-031ddfe7-5c06-42bf-bce1-4ab3aa76af8f.jpg) |![car1-resize2](https://user-images.githubusercontent.com/48131753/194024776-c45b288c-1f54-4339-bf57-a689b122acc8.jpg) |
+| ![yolov7](https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/yolov7.jpg) |![car1-resize2](https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/yolov5.jpg) |
 
 Параметры используемых нейронных сетей:
 | **parameters** | **yolov7** | **yolov5** |
@@ -110,7 +110,7 @@ augmentation = al.PadIfNeeded
 | DeepLabV3+ | ResNet-18       | 480x480    | 0.9243              |
 | Unet       | EfficientNet B3 | 480x480    | 0.93004             |
 ### Пример работы
-| ![Segmentation example](https://i.imgur.com/CDofjPM.png) | 
+| ![Segmentation example](https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/example_work.png) | 
 |:--------------------------------------------------------:| 
 |                *Пример работы алгоритма.*                |
 # OCR
@@ -191,12 +191,12 @@ model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizers.Adam(
 #### Resume
 
 Было отмечено, что качество OCR снижается при снижении качества и освещенности изображений, поступающих на вход. Например, следующие изображения хорошо детекцируются:
-![image](https://user-images.githubusercontent.com/70758674/193918875-7e97eaf2-a436-4907-80d3-d2ed5f4634b9.png)
-![image](https://user-images.githubusercontent.com/70758674/193918944-ef5a08da-8edf-4972-97fa-b7226df53729.png)
+![test1](https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/test1.png)
+![test2](https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/test2.png)
 
 Примером плоходетектируемых изображений являются:
-![image](https://user-images.githubusercontent.com/70758674/193919052-de552385-e266-441a-9850-83b937588e1a.png)
-![image](https://user-images.githubusercontent.com/70758674/193919075-8632d066-4aab-4afa-84ae-b736c01e91c1.png)
+![test3](https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/test3.png)
+![test4](https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/test4.png)
 
 Способы увеличить точность:
 - Тесты с настройкой параметров поиска символов на номере
