@@ -23,3 +23,13 @@ def inference_yolov7(image, weights_path):
     print(detections)
 
     return detections
+
+
+def load_model_yolov7(weights_path):
+    """
+        Load trained PyTorch yolov7 model to recognize car plates
+
+        :param weights_path: Path to weights
+        :return: A loaded model
+        """
+    return torch.hub.load('WongKinYiu/yolov7', 'custom', path=weights_path)

@@ -8,12 +8,13 @@ import sys
 
 import cv2
 import numpy as np
+import tensorflow as tf
 from keras.models import model_from_json
 
 
 def find_contours(
     dimensions: list,
-    img: numpy.ndarray,
+    img: np.ndarray,
 ) -> np.array:
     """
  Find letters symbols contours
@@ -51,7 +52,7 @@ def find_contours(
         cntrs_last.append(cntr2)
         for cntrout in cntrs_int:
             if (cv2.boundingRect(cntrout) != cv2.boundingRect(cntr2)):
-                if (cv2.pointPolygonTest(cntrout, point) >= 0):
+                if (cv2.pointPolygonTest(cntrout, point, measureDist=False) >= 0):
                     cntrs_last.pop()
                     break
 
@@ -82,7 +83,7 @@ def find_contours(
 
 
 def segment_characters(
-    image: numpy.ndarray,
+    image: np.ndarray,
 ) -> np.array:
     """
  Segment characters and find letters symbols contours
@@ -137,8 +138,8 @@ def load_keras_model(
 
 
 def fix_dimension(
-        img: numpy.ndarray,
-) -> numpy.ndarray:
+        img: np.ndarray,
+) -> np.ndarray:
     """
  Fix dimension every character's image
  :param img: character's image
@@ -151,7 +152,7 @@ def fix_dimension(
 
 
 def show_results(
-        char: numpy.ndarray,
+        char: np.ndarray,
 ) -> str:
     """
  OCR and show text's result
