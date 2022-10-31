@@ -213,12 +213,13 @@ model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizers.Adam(
 #### Resume
 
 Было отмечено, что качество OCR снижается при снижении качества и освещенности изображений, поступающих на вход. Например, следующие изображения хорошо детекцируются:
-![test1](https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/test1.png)
-![test2](https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/test2.png)
+
+<img src="https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/test1.png" width="500" />     <img src="https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/test2.png" width="500" />
+
 
 Примером плоходетектируемых изображений являются:
-![test3](https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/test3.png)
-![test4](https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/test4.png)
+
+<img src="https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/test3.png" width="500" />     <img src="https://github.com/VirtuallInsanity/car-plates-recognition/blob/develop/info/test4.png" width="500" />
 
 Способы увеличить точность:
 - Тесты с настройкой параметров поиска символов на номере
@@ -232,3 +233,4 @@ model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizers.Adam(
 
 ### Conclusion
 Лучше всего для детекции себя показала yolov7. Имея такую же, а в некоторых кейсах(плохая освещенность и т.д.) и более лучшую точность по сравнению с сегментатором. Так же, быстрота работы семейства yolo с видео, является весомым преимуществом перед сегментатором. Однако установка и отсутствие нативной поддержки PyTorch осложняет работу с yolov7, что может выставить yolov5 в более выгодном свете несмотря на более низкую точность.
+Для OCR лучше всего использовать CNN2, в скорости она лишь немного уступает CNN1, но значительно лучше распознаёт отдельные символы.
