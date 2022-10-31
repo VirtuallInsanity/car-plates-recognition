@@ -31,8 +31,6 @@ def find_contours(
     max_count_cntrs = 15
     cntrs = sorted(cntrs, key=cv2.contourArea, reverse=True)[:max_count_cntrs]
 
-    ii = cv2.imread('contour.jpg')
-
     # Finding suitable contours
     x_cntr_list = []
     img_res = []
@@ -63,11 +61,6 @@ def find_contours(
         char_copy = np.zeros((44, 24))
         char = img[int_y:int_y + int_height, int_x:int_x + int_width]
         char = cv2.resize(char, (20, 40))
-        cv2.rectangle(
-            ii, (int_x, int_y),
-            (int_width + int_x, int_y + int_height),
-            (50, 21, 200), 2,
-        )
         char = cv2.subtract(255, char)
 
         char_copy[2:42, 2:22] = char
